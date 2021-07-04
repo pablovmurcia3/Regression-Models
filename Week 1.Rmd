@@ -5,8 +5,52 @@ output:
     keep_md: yes
 ---
 
-### Week 1 
 
-## **Visualizing Numerical Data** 
+## **week 1** 
 
-### **Scatterplots**  
+### **Introduction to regression**
+
+**Power of the regression**: The models are parsimonious, they describe the data in an easy way. Difference with machine learning
+
+**The creator of the regression**: Francis Galton
+
+
+**Basic Least squares**
+
+```{r n2, results='hide', message = FALSE}
+library(UsingR)
+library(ggplot2)
+library(reshape2)
+data(galton)
+str(galton)
+
+long <- melt(galton)
+```
+
+
+Look at the *marginal distributions* of parents and children height
+
+```{r n, fig.align='center', fig.width=8}
+g <- ggplot(long, aes(x = value, fill = variable))
+g <- g + geom_histogram(colour = "black", binwidth=1)
+g <- g + facet_grid(. ~ variable)
+g
+```
+
+
+Let´s only look to the children heights:
+
+* How can we find the best predictor to the children heights?
+* The *middle* could be a good predictor
+* An math approximation to it is 
+
+<center>
+![Pf](C:\Users\pablo\Desktop\Coursera\Regression-Models\Images\1.PNG)
+</center>
+
+
+
+
+
+
+
