@@ -108,8 +108,20 @@ through the origin. The slope is the same one you would get if you centered the 
 
 * If you normalized the data, $\{ \frac{X_i - \bar X}{Sd(X)}, \frac{Y_i - \bar Y}{Sd(Y)}\}$, the slope is $Cor(Y, X)$.
 
-```{r y, results='hide', message = FALSE}
+
+```r
 library(UsingR)
+```
+
+```
+## Warning: package 'UsingR' was built under R version 4.0.5
+```
+
+```
+## Warning: package 'HistData' was built under R version 4.0.5
+```
+
+```r
 library(ggplot2)
 library(reshape2)
 library(manipulate)
@@ -119,8 +131,8 @@ library(dplyr)
 
 Probe that our formulas are right
 
-```{r n1, fig.align='center', fig.width=8}
 
+```r
 library(UsingR)
 data(galton)
 
@@ -129,44 +141,108 @@ x <- galton$parent
 beta1 <- cor(y, x) *  sd(y) / sd(x)
 beta0 <- mean(y) - beta1 * mean(x)
 rbind(c(beta0, beta1), coef(lm(y ~ x)))
+```
 
+```
+##      (Intercept)         x
+## [1,]    23.94153 0.6462906
+## [2,]    23.94153 0.6462906
+```
+
+```r
 # We can reverse the relationship
 beta1 <- cor(y, x) *  sd(x) / sd(y)
 beta0 <- mean(x) - beta1 * mean(y)
 
 rbind(c(beta0, beta1), coef(lm(x ~ y)))
+```
 
+```
+##      (Intercept)         y
+## [1,]    46.13535 0.3256475
+## [2,]    46.13535 0.3256475
 ```
 
 Now let’s show that regression through the origin yields an equivalent slope if you center the data first
 
-```{r n2, fig.align='center', fig.width=8}
+
+```r
 yc <- y - mean(y)
 xc <- x - mean(x)
 beta1 <- sum(yc * xc) / sum(xc ^ 2) # the formula that we can use if the data is centered
 c(beta1, coef(lm(y ~ x))[2])
+```
 
+```
+##                   x 
+## 0.6462906 0.6462906
+```
+
+```r
 # Regression through the origin
 lm(yc ~ xc-1) 
+```
 
+```
+## 
+## Call:
+## lm(formula = yc ~ xc - 1)
+## 
+## Coefficients:
+##     xc  
+## 0.6463
 ```
 If we normalize the variables the slope would be the correlation.. 
 
-```{r n3, fig.align='center', fig.width=8}
+
+```r
 yn <- (y - mean(y))/sd(y)
 mean(yn)
+```
+
+```
+## [1] 2.183943e-16
+```
+
+```r
 sd(yn)
+```
+
+```
+## [1] 1
+```
+
+```r
 xn <- (x - mean(x))/sd(x) # can be interpreted as standard deviation from the mean
 mean(xn)
+```
+
+```
+## [1] 5.501733e-16
+```
+
+```r
 sd(xn)
+```
+
+```
+## [1] 1
+```
+
+```r
 c(cor(y, x), cor(yn, xn), coef(lm(yn ~ xn))[2])
+```
+
+```
+##                            xn 
+## 0.4587624 0.4587624 0.4587624
 ```
   
   
 Add the regression line to ggplot
 
-```{r n4, fig.align='center', fig.width=8}
 
+```r
 freqData <- as.data.frame(table(galton$child, galton$parent))
 names(freqData) <- c("child", "parent", "freq")
 freqData$child <- as.numeric(as.character(freqData$child))
@@ -180,5 +256,7 @@ g <- g + scale_colour_gradient(low = "lightblue", high="white")
 g <- g + geom_smooth(method="lm", formula=y~x) # add geom_smooth, method:lm
 g
 ```
+
+<img src="Week-1a_files/figure-html/n4-1.png" style="display: block; margin: auto;" />
 
 **Good point: Ggplot automatically give us a confidence interval around the line**
