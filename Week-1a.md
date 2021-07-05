@@ -72,7 +72,7 @@ $$
 where $S_x$ and $S_y$ are the estimates of standard deviations 
 for the $X$ observations and $Y$ observations, respectively.
 
-**The correlation is the standardization of the covariance into unitless quantity* 
+*The correlation is the standardization of the covariance into unitless quantity* 
 
 
 ### **Some facts about correlation**   
@@ -280,7 +280,7 @@ x[ox[100]] # the maximum
 ```
 
 ```
-## [1] 2.636468
+## [1] 2.019726
 ```
 
 ```r
@@ -288,7 +288,7 @@ y[ox[100]] # The y paired with the maximum
 ```
 
 ```
-## [1] -0.6892294
+## [1] -0.9369001
 ```
 The maximum would be the largest by chance, and the probability t is paired with a smaller element would be high.
 

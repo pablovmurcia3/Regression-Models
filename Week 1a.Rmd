@@ -72,7 +72,7 @@ $$
 where $S_x$ and $S_y$ are the estimates of standard deviations 
 for the $X$ observations and $Y$ observations, respectively.
 
-**The correlation is the standardization of the covariance into unitless quantity* 
+*The correlation is the standardization of the covariance into unitless quantity* 
 
 
 ### **Some facts about correlation**   
