@@ -260,3 +260,104 @@ g
 <img src="Week-1a_files/figure-html/n4-1.png" style="display: block; margin: auto;" />
 
 **Good point: Ggplot automatically give us a confidence interval around the line**
+
+
+## **Regression to the mean** 
+
+
+* "If a first measurement is extreme then a second measurement on the same subject will be closer to the mean" 
+* Discovered by Francis Galton.  The idea served as a foundation for the discovery of linear regression.
+
+**Case of extreme regression to the mean**
+
+Imagine if you simulated pairs of random normals.
+
+```r
+x <- rnorm(100)
+y <- rnorm(100)
+ox <- order(x)
+x[ox[100]] # the maximum
+```
+
+```
+## [1] 2.636468
+```
+
+```r
+y[ox[100]] # The y paired with the maximum
+```
+
+```
+## [1] -0.6892294
+```
+The maximum would be the largest by chance, and the probability t is paired with a smaller element would be high.
+
+In other words  $P(Y < x | X = x)$ gets bigger as $x$ heads into the very large values. Similarly $P(Y > x | X = x)$ gets bigger as $x$ heads to very small values.
+
+
+**In reality there is a mix where we can find noise and intrinsic components**
+
+
+* Think of the regression line as the **intrinsic part**. And think of the regression to the mean as the **result of noise**
+
+* Unless $Cor(Y, X) = 1$ the intrinsic part isn't perfect
+
+
+### **Code example**
+
+Looking at the correlation quantified regression to the mean 
+
+
+```r
+data(father.son)
+y <- (father.son$sheight - mean(father.son$sheight)) / sd(father.son$sheight)
+x <- (father.son$fheight - mean(father.son$fheight)) / sd(father.son$fheight)
+rho <- cor(x, y)
+
+g = ggplot(data.frame(x, y), aes(x = x, y = y))
+g = g + geom_point(size = 5, alpha = .2, colour = "black")
+g = g + geom_point(size = 4, alpha = .2, colour = "red")
+g = g + geom_vline(xintercept = 0)
+g = g + geom_hline(yintercept = 0)
+g = g + geom_abline(position = "identity")
+```
+
+```
+## Warning: Ignoring unknown parameters: position
+```
+
+```r
+g = g + geom_abline(intercept = 0, slope = rho, size = 2)
+g = g + geom_abline(intercept = 0, slope = 1 / rho, size = 2)
+g = g + xlab("Father's height, normalized")
+g = g + ylab("Son's height, normalized")
+g
+```
+
+<img src="Week-1a_files/figure-html/z-1.png" style="display: block; margin: auto;" />
+
+So..
+* If there is not regression to the mean: all the observation would be located on the identity line. So With the parents height we can perfectly predict their son height
+* but *There is noise*.. So the prediction is not on the identity line, is on the regression line. 
+* The parent height is multiplicated by the correlation 
+* Example: if the parent height is 2sd, then the prediction is 2sd*corr, a value that is between 2sd (no regression to the mean, no noise) and 0 (regression to the mean, noise)
+
+
+We can do the same thing if we consider the son height as the outcome and the parent height as the predictor 
+
+
+### **math interpretation example**
+
+*Amazing video*: https://www.youtube.com/watch?v=aLv5cerjV0c&t=1152s
+
+![Proportion of 5´s v.s number of rolls](C:\Users\pablo\Desktop\Coursera\Regression-Models\Images\captura.PNG)
+</center>
+
+![Proportion of 5´s v.s number of rolls](C:\Users\pablo\Desktop\Coursera\Regression-Models\Images\captura2.PNG)
+</center>
+
+
+
+
+
+
