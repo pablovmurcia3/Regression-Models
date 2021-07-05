@@ -1,21 +1,21 @@
 ---
-title: "Week 1"
 output: 
   html_document: 
     keep_md: yes
 ---
 
 
-## **week 1** 
+**Week 1** 
+==============
 
-### **Introduction to regression**
+## **Introduction to regression**
 
 **Power of the regression**: The models are parsimonious, they describe the data in an easy way. Difference with machine learning
 
 **The creator of the regression**: Francis Galton
 
 
-### **Basic Least squares**
+## **Basic Least squares**
 
 ```{r y, results='hide', message = FALSE}
 library(UsingR)
@@ -76,7 +76,7 @@ myHist(mean(galton$child))
 As mu approximates the mean, the msq gets lower.
   
    
-### **Technical details**
+## **Technical details**
  
 
 The math proof of the past experiment...
@@ -101,7 +101,7 @@ $$
 \end{align} 
 $$
 
-### **Introductory data example**
+## **Introductory data example**
 
 Comparing children’s heights and their parent’s
 heights
@@ -204,5 +204,8 @@ g <- g + geom_abline(intercept = coef(lm1)[1], slope = coef(lm1)[2], size = 3, c
 g
 
 ```
+
+
+
 
 
