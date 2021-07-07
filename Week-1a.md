@@ -265,7 +265,8 @@ g
 ## **Regression to the mean** 
 
 
-* "If a first measurement is extreme then a second measurement on the same subject will be closer to the mean" 
+* Best definition: **"If two variables are imperfectly correlated, extreme scores on one variable are associated with scores that are less extreme on the other variable, on average"**
+
 * Discovered by Francis Galton.  The idea served as a foundation for the discovery of linear regression.
 
 **Case of extreme regression to the mean**
@@ -280,7 +281,7 @@ x[ox[100]] # the maximum
 ```
 
 ```
-## [1] 2.019726
+## [1] 3.695325
 ```
 
 ```r
@@ -288,7 +289,7 @@ y[ox[100]] # The y paired with the maximum
 ```
 
 ```
-## [1] -0.9369001
+## [1] 1.296753
 ```
 The maximum would be the largest by chance, and the probability t is paired with a smaller element would be high.
 
