@@ -281,7 +281,7 @@ x[ox[100]] # the maximum
 ```
 
 ```
-## [1] 3.695325
+## [1] 2.541659
 ```
 
 ```r
@@ -289,7 +289,7 @@ y[ox[100]] # The y paired with the maximum
 ```
 
 ```
-## [1] 1.296753
+## [1] 0.5829937
 ```
 The maximum would be the largest by chance, and the probability t is paired with a smaller element would be high.
 

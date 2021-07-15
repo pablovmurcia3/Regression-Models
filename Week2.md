@@ -43,8 +43,157 @@ Specifying the model as linear with additive error terms is generally more usefu
 
 ### **Interpreting our regression coefficients**
 
+**Intercept**
+
+Our model allows us to attach statistical interpretations to our parameters. Let’s start with the intercept; β0 represents the expected value of the response when the predictor is 0. We can show this as:
+
+$$
+E[Y | X = 0] =  \beta_0 + \beta_1 \times 0 = \beta_0
+$$
+Note, the intercept isn’t always of interest. For example, when X = 0 is impossible or far outside of the range of data. Take as a specific instance, when X is blood pressure, no one is interested in studying blood pressure’s impact on anything for values near 0. There is a way to make your intercept more interpretable. Consider that:
+
+$$
+Y_i = \beta_0 + \beta_1 X_i + \epsilon_i
+= \beta_0 + a \beta_1 + \beta_1 (X_i - a) + \epsilon_i
+= \tilde \beta_0 + \beta_1 (X_i - a) + \epsilon_i
+$$
+
+So, shifting your $X$ values by value $a$ changes the intercept, but not the slope. 
+
+* Often $a$ is set to $\bar X$ so that the intercept is interpretted as the expected response at the average $X$ value.
 
 
+**Slope**
+
+Our slope, β1, is *the expected change in response for a 1 unit change in the predictor*. We can show that as follows
+
+$$
+E[Y ~|~ X = x+1] - E[Y ~|~ X = x] =
+\beta_0 + \beta_1 (x + 1) - (\beta_0 + \beta_1 x ) = \beta_1
+$$
+
+* Consider the impact of changing the units of $X$. 
+
+$$
+Y_i = \beta_0 + \beta_1 X_i + \epsilon_i
+= \beta_0 + \frac{\beta_1}{a} (X_i a) + \epsilon_i
+= \beta_0 + \tilde \beta_1 (X_i a) + \epsilon_i
+$$
+Therefore, multiplication of $X$ by a factor $a$ results in dividing the coefficient by a factor of $a$. 
+
+* Example: $X$ is height in $m$ and $Y$ is weight in $kg$. Then $\beta_1$ is $kg/m$. Converting $X$ to $cm$ implies multiplying $X$ by $100 cm/m$. To get $\beta_1$ in the right units, we have to divide by $100 cm /m$ to get it to have the right units. 
+
+$$
+X m \times \frac{100cm}{m} = (100 X) cm
+~~\mbox{and}~~
+\beta_1 \frac{kg}{m} \times\frac{1 m}{100cm} = 
+\left(\frac{\beta_1}{100}\right)\frac{kg}{cm}
+$$
+
+**Prediction for Y (with observed data)**
+
+
+* If we would like to guess the outcome at a particular
+  value of the predictor, say $X$, the regression model guesses
+  
+$$
+\hat \beta_0 + \hat \beta_1 X
+$$
+* Regression,especially linear regression, often doesn’t produce the best prediction algorithms. However, it produces parsimonious and interpretable models along with the predictions. Also, as we’ll see later we’ll be able to get easily described estimates of uncertainty associated with our predictions.
+
+* We can predict at any value of X. But we are going to have more reasonable predictions if the value of X that we plugin is in the cloud of data
+
+
+**Data example**
+
+
+```r
+library(UsingR)
+library(ggplot2)
+library(reshape2)
+library(manipulate)
+library(dplyr)
+```
+
+
+```r
+data(diamond)
+
+str(diamond)
+g = ggplot(diamond, aes(x = carat, y = price))
+g = g + xlab("Mass (carats)")
+g = g + ylab("Price (SIN $)")
+g = g + geom_point(size = 7, colour = "black", alpha=0.5)
+g = g + geom_point(size = 5, colour = "blue", alpha=0.2)
+g = g + geom_smooth(method = "lm", colour = "black")
+g
+```
+
+![](Week2_files/figure-html/y1-1.png)<!-- -->
+
+Let´s fitt the linear regression model 
+
+
+```r
+fit <- lm(price ~ carat, data = diamond)
+coef(fit)
+summary(fit)
+```
+
+* Therefore,we estimate an expected 3721.02 (SIN) dollar increase in price for every carat increase in mass of diamond. The intercept -259.63 is the expected price of a 0 carat diamond. The intercept is not of interest.
+
+So let´s get a more interpretable intercept by mean centering
+
+
+
+```r
+fit2 <- lm(price ~ I(carat-mean(carat)), data = diamond)
+# if ypu want to do operations inside lm, you need I()
+coef(fit2)
+
+# thes same as...
+
+diamond$caratc <- diamond$carat - mean(diamond$carat)
+
+fitc <- lm(price ~ caratc, data = diamond)
+coef(fitc)
+```
+
+* Thus the new intercept, 500.1, is the expected price for the average sized diamond of the data (0.2042
+carats). Notice the estimated slope didn’t change at all.
+
+What about changing units to 1/10th of a carat? We can just do this by just dividing the coefficient by 10, no need to refit the model.
+
+Thus, we expect a 372.102 (SIN) dollar change in price for every 1/10th of a carat increase in mass of diamond.
+
+But let´s do it on R.
+
+
+```r
+fit3 <- lm(price ~ I(carat * 10), data = diamond)
+coef(fit3)
+```
+
+
+Now we want to predict the price of data.
+
+Let´s introduce the function *predict*
+
+
+
+```r
+newx <- c(0.16, 0.27, 0.34)
+coef(fit)[1] + coef(fit)[2] * newx
+
+
+# better/efficient method
+# use predict 
+
+predict(fit, newdata = data.frame(carat = newx))
+# here we plug the data in the form as a data frame
+
+predict(fit) # it predicts at the x data points --> gives you yhe fitted y´s
+```
 
 
 

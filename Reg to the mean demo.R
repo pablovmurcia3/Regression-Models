@@ -83,13 +83,16 @@ gs
 # terms )    #######
 
 xf <- 1:500
-yf <- coef(lm(y ~ x))[1] + coef(lm(y ~ x))[2]*xf
+yf <- coef(lm(y ~ x))[1] + coef(lm(y ~ x))[2]*x
 
 
 xfs <- 1:500
-yfs <- coef(lm(ys ~ xs))[1] + coef(lm(ys ~ xs))[2]*xfs
+yfs <- coef(lm(ys ~ xs))[1] + coef(lm(ys ~ xs))[2]*xs
 
+# The relative thinking! 
 
-look <- data.frame(xf,yf,xfs,yfs)
+# the change in y is bigger than the change of x with respect to the mean 
+
+look <- data.frame(x,yf,xs,yfs)
 yf[2]- yf[1]
 yfs[2]- yfs[1]
