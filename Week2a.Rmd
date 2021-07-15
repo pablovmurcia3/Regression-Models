@@ -1,0 +1,61 @@
+---
+title: "Week2a"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+**Week 2** 
+==============
+
+## **Residuals and residual variation**
+
+* Model $Y_i = \beta_0 + \beta_1 X_i + \epsilon_i$ where $\epsilon_i \sim N(0, \sigma^2)$.
+* Observed outcome $i$ is $Y_i$ at predictor value $X_i$
+* Predicted outcome $i$ is $\hat Y_i$ at predictor valuve $X_i$ is
+
+$$
+\hat Y_i = \hat \beta_0 + \hat \beta_1 X_i
+$$
+
+* Residual, the between the observed and predicted outcome
+
+  $$
+  e_i = Y_i - \hat Y_i
+  $$
+  
+* The vertical distance between the observed data point and the regression line
+
+* Least squares minimizes $\sum_{i=1}^n e_i^2$
+
+* The $e_i$ can be thought of as estimates of the $\epsilon_i$.
+
+* But be careful with this idea.. It´s easy to manipulate the residuals by adding irrelevant regressor into the equations 
+
+### **Some important properties**
+
+* $E[e_i] = 0$.}
+*Their population expected value*
+
+* If an intercept is included, $\sum_{i=1}^n e_i = 0$
+*Their empirical sum, hence the empirical mean*
+
+
+* If a regressor variable, $X_i$, is included in the model $\sum_{i=1}^n e_i X_i = 0$.
+
+* Residuals are useful for investigating poor model fit.
+
+* Positive residuals are above the line, negative residuals are below.
+
+* Residuals can be thought of as the outcome ($Y$) with the
+  linear association of the predictor ($X$) removed.
+  
+* One differentiates residual variation (variation after removing
+the predictor) from systematic variation (variation explained by the regression model).
+
+* Residual plots highlight poor model fit.
+
+
+
+
+### **}**
