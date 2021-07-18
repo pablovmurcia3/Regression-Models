@@ -268,3 +268,139 @@ g
 
 **The subtraction of both**: variation that is explained by the regression model.
 
+### **Estimating residual  variation**
+
+Residual variation is the variation around the regression line
+
+* Model $Y_i = \beta_0 + \beta_1 X_i + \epsilon_i$ where $\epsilon_i \sim N(0, \sigma^2)$.
+
+* The ML estimate of $\sigma^2$ is $\frac{1}{n}\sum_{i=1}^n e_i^2$,
+the average squared residual. (cause te average is 0)
+
+* Most people use
+
+$$
+\hat \sigma^2 = \frac{1}{n-2}\sum_{i=1}^n e_i^2.
+$$
+This because we include two covariates (intercept and slope). When we include them we put constrains, so we lose the degrees of freedom.
+  
+* Also, the $n-2$ instead of $n$ is so that $E[\hat \sigma^2] = \sigma^2$ 
+
+
+```r
+y <- diamond$price; x <- diamond$carat; n <- length(y)
+fit <- lm(y ~ x)
+summary(fit)$sigma
+
+# or we can calculate it with the formula
+sqrt(sum(resid(fit)^2) / (n - 2))
+```
+
+### **Summarizing variation**
+
+- The total variability in our response is the variability around an intercept (think mean only regression) $\sum_{i=1}^n (Y_i - \bar Y)^2$
+- The regression variability is the variability that is explained by adding the predictor $\sum_{i=1}^n  (\hat Y_i - \bar Y)^2$
+- The error variability is what's leftover around the regression line
+$\sum_{i=1}^n (Y_i - \hat Y_i)^2$ (*the residual variability*)
+- Neat fact
+$$
+\sum_{i=1}^n (Y_i - \bar Y)^2 
+= \sum_{i=1}^n (Y_i - \hat Y_i)^2 + \sum_{i=1}^n  (\hat Y_i - \bar Y)^2 
+$$
+## **R squared**
+
+- R squared is the percentage of the total variability that is explained
+by the linear relationship with the predictor
+$$
+R^2 = \frac{\sum_{i=1}^n  (\hat Y_i - \bar Y)^2}{\sum_{i=1}^n (Y_i - \bar Y)^2}
+$$
+## Some facts about $R^2$
+* $R^2$ is the percentage of variation explained by the regression model.
+* $0 \leq R^2 \leq 1$
+* $R^2$ is the sample correlation squared.
+* $R^2$ can be a misleading summary of model fit. 
+  * Deleting data can inflate $R^2$.
+  * (For later.) Adding terms to a regression model always increases $R^2$.
+* 
+
+Do `example(anscombe)` to see the following data.
+  * Basically same mean and variance of X and Y.
+  * Identical correlations (hence same $R^2$ ).
+  * Same linear regression relationship.
+
+
+```r
+require(stats); require(graphics); data(anscombe)
+ff <- y ~ x
+mods <- setNames(as.list(1:4), paste0("lm", 1:4))
+
+for(i in 1:4) {
+        ff[2:3] <- lapply(paste0(c("y","x"), i), as.name)
+        ## or   ff[[2]] <- as.name(paste0("y", i))
+        ##      ff[[3]] <- as.name(paste0("x", i))
+        mods[[i]] <- lmi <- lm(ff, data = anscombe)
+        #print(anova(lmi))
+}
+
+## Now, do what you should have done in the first place: PLOTS
+op <- par(mfrow = c(2, 2), mar = 0.1+c(4,4,1,1), oma =  c(0, 0, 2, 0))
+for(i in 1:4) {
+        ff[2:3] <- lapply(paste0(c("y","x"), i), as.name)
+        plot(ff, data = anscombe, col = "red", pch = 21, bg = "orange", cex = 1.2,
+             xlim = c(3, 19), ylim = c(3, 13))
+        abline(mods[[i]], col = "blue")
+}
+mtext("Anscombe's 4 Regression data sets", outer = TRUE, cex = 1.5)
+```
+
+![](Week2a_files/figure-html/y12-1.png)<!-- -->
+
+```r
+par(op)
+```
+
+All these data set have the same $R^2$... So it does not give us the whole story 
+
+
+## **How to derive R squared (Not required!)**
+### **For those that are interested**
+$$
+\begin{align}
+\sum_{i=1}^n (Y_i - \bar Y)^2 
+& = \sum_{i=1}^n (Y_i - \hat Y_i + \hat Y_i - \bar Y)^2 \\
+& = \sum_{i=1}^n (Y_i - \hat Y_i)^2 + 
+2 \sum_{i=1}^n  (Y_i - \hat Y_i)(\hat Y_i - \bar Y) + 
+\sum_{i=1}^n  (\hat Y_i - \bar Y)^2 \\
+\end{align}
+$$
+
+****
+### Scratch work
+$(Y_i - \hat Y_i) = \{Y_i - (\bar Y - \hat \beta_1 \bar X) - \hat \beta_1 X_i\} = (Y_i - \bar Y) - \hat \beta_1 (X_i - \bar X)$
+
+$(\hat Y_i - \bar Y) = (\bar Y - \hat \beta_1 \bar X - \hat \beta_1 X_i - \bar Y )
+= \hat \beta_1  (X_i - \bar X)$
+
+$\sum_{i=1}^n  (Y_i - \hat Y_i)(\hat Y_i - \bar Y) 
+= \sum_{i=1}^n  \{(Y_i - \bar Y) - \hat \beta_1 (X_i - \bar X))\}\{\hat \beta_1  (X_i - \bar X)\}$
+
+$=\hat \beta_1 \sum_{i=1}^n (Y_i - \bar Y)(X_i - \bar X) -\hat\beta_1^2\sum_{i=1}^n (X_i - \bar X)^2$
+
+$= \hat \beta_1^2 \sum_{i=1}^n (X_i - \bar X)^2-\hat\beta_1^2\sum_{i=1}^n (X_i - \bar X)^2 = 0$
+
+
+---
+## The relation between R squared and r
+### (Again not required)
+Recall that $(\hat Y_i - \bar Y) = \hat \beta_1  (X_i - \bar X)$
+so that
+$$
+R^2 = \frac{\sum_{i=1}^n  (\hat Y_i - \bar Y)^2}{\sum_{i=1}^n (Y_i - \bar Y)^2}
+= \hat \beta_1^2  \frac{\sum_{i=1}^n(X_i - \bar X)^2}{\sum_{i=1}^n (Y_i - \bar Y)^2}
+= Cor(Y, X)^2
+$$
+Since, recall, 
+$$
+\hat \beta_1 = Cor(Y, X)\frac{Sd(Y)}{Sd(X)}
+$$
+So, $R^2$ is literally $r$ squared.
