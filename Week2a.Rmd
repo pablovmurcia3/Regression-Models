@@ -234,14 +234,14 @@ g
 
 **The subtraction of both**: variation that is explained by the regression model.
 
-### **Estimating residual  variation**
+### **Estimating residual variation**
 
 Residual variation is the variation around the regression line
 
 * Model $Y_i = \beta_0 + \beta_1 X_i + \epsilon_i$ where $\epsilon_i \sim N(0, \sigma^2)$.
 
 * The ML estimate of $\sigma^2$ is $\frac{1}{n}\sum_{i=1}^n e_i^2$,
-the average squared residual. (cause te average is 0)
+the average squared residual. (cause the average is 0)
 
 * Most people use
 
