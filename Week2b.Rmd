@@ -89,7 +89,7 @@ beta0 <- mean(y) - beta1 * mean(x)
 
 e <- y - beta0 - beta1 * x
 
-sigma <- sqrt(sum(e^2) / (n-2))  #Estimate of standard deviation around the regression line 
+sigma <- sqrt(sum(e^2) / (n-2))
 
 ssx <- sum((x - mean(x))^2) #Variance of variable..
 

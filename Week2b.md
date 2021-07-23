@@ -41,6 +41,8 @@ $$
 
 * $\sigma_{\hat \beta_1}^2 = Var(\hat \beta_1) = \sigma^2 / \sum_{i=1}^n (X_i - \bar X)^2$
 
+* **This is the standard error**
+
 numerator: Variance of the noise in direct relationship with variance of betas
 Denominator: Better to have a big variance of the variable. 
 
@@ -97,7 +99,7 @@ beta0 <- mean(y) - beta1 * mean(x)
 
 e <- y - beta0 - beta1 * x
 
-sigma <- sqrt(sum(e^2) / (n-2))  #Estimate of standard deviation around the regression line 
+sigma <- sqrt(sum(e^2) / (n-2))
 
 ssx <- sum((x - mean(x))^2) #Variance of variable..
 
@@ -174,11 +176,18 @@ $$
 \hat \beta_0 + \hat \beta_1 x_0
 $$
 
-* A standard error is needed to create a prediction interval.
+* A **standard error** is needed to create a prediction interval.
+
 * *There's a distinction between intervals for the regression line at point $x_0$ and the prediction of what a $y$ would be at point $x_0$.*
   
 * Line at $x_0$ se, $\hat \sigma\sqrt{\frac{1}{n} +  \frac{(x_0 - \bar X)^2}{\sum_{i=1}^n (X_i - \bar X)^2}}$
+
+*If we take the job of collecting more data, the equation will decrease. In this sense we are more secure about our estimation of the line*
+
+
 * Prediction interval se at $x_0$, $\hat \sigma\sqrt{1 + \frac{1}{n} + \frac{(x_0 - \bar X)^2}{\sum_{i=1}^n (X_i - \bar X)^2}}$
+
+*Because the Y has some variability that is not explained by the model, we can´t easily decrease the equation by collecting more data. This is expresed by the 1.*
 
 
 
@@ -201,3 +210,17 @@ g
 ```
 
 ![](Week2b_files/figure-html/y5-1.png)<!-- -->
+## **Discussion**
+
+* Both intervals have varying widths.
+  * Least width at the mean of the Xs.
+  
+* We are quite confident in the regression line, so that 
+  interval is very narrow.
+  
+  * If we knew $\beta_0$ and $\beta_1$ this interval would have zero width.
+  
+* The prediction interval must incorporate the variabilibity
+  in the data around the line.
+  
+  * Even if we knew $\beta_0$ and $\beta_1$ this interval would still have width.

@@ -106,7 +106,7 @@ $$
 
 **Data example**
 
-```{r y, results='hide', message = FALSE, warning= FALSE}
+```{r y, message = FALSE, warning= FALSE}
 library(UsingR)
 library(ggplot2)
 library(reshape2)
@@ -114,7 +114,7 @@ library(manipulate)
 library(dplyr)
 ```
 
-```{r y1, results='hide', message = FALSE}
+```{r y1, message = FALSE}
 data(diamond)
 
 str(diamond)
@@ -129,7 +129,7 @@ g
 
 Let´s fitt the linear regression model 
 
-```{r y2, results='hide', message = FALSE}
+```{r y2, message = FALSE}
 fit <- lm(price ~ carat, data = diamond)
 coef(fit)
 summary(fit)
@@ -140,7 +140,7 @@ summary(fit)
 So let´s get a more interpretable intercept by mean centering
 
 
-```{r y3, results='hide', message = FALSE}
+```{r y3, message = FALSE}
 fit2 <- lm(price ~ I(carat-mean(carat)), data = diamond)
 # if ypu want to do operations inside lm, you need I()
 coef(fit2)
@@ -163,7 +163,7 @@ Thus, we expect a 372.102 (SIN) dollar change in price for every 1/10th of a car
 
 But let´s do it on R.
 
-```{r y4, results='hide', message = FALSE}
+```{r y4, message = FALSE}
 fit3 <- lm(price ~ I(carat * 10), data = diamond)
 coef(fit3)
 
@@ -175,7 +175,7 @@ Now we want to predict the price of data.
 Let´s introduce the function *predict*
 
 
-```{r y5, results='hide', message = FALSE}
+```{r y5, message = FALSE}
 newx <- c(0.16, 0.27, 0.34)
 coef(fit)[1] + coef(fit)[2] * newx
 

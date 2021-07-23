@@ -120,6 +120,15 @@ library(dplyr)
 data(diamond)
 
 str(diamond)
+```
+
+```
+## 'data.frame':	48 obs. of  2 variables:
+##  $ carat: num  0.17 0.16 0.17 0.18 0.25 0.16 0.15 0.19 0.21 0.15 ...
+##  $ price: int  355 328 350 325 642 342 322 485 483 323 ...
+```
+
+```r
 g = ggplot(diamond, aes(x = carat, y = price))
 g = g + xlab("Mass (carats)")
 g = g + ylab("Price (SIN $)")
@@ -137,7 +146,36 @@ Let´s fitt the linear regression model
 ```r
 fit <- lm(price ~ carat, data = diamond)
 coef(fit)
+```
+
+```
+## (Intercept)       carat 
+##   -259.6259   3721.0249
+```
+
+```r
 summary(fit)
+```
+
+```
+## 
+## Call:
+## lm(formula = price ~ carat, data = diamond)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -85.159 -21.448  -0.869  18.972  79.370 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)  -259.63      17.32  -14.99   <2e-16 ***
+## carat        3721.02      81.79   45.50   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 31.84 on 46 degrees of freedom
+## Multiple R-squared:  0.9783,	Adjusted R-squared:  0.9778 
+## F-statistic:  2070 on 1 and 46 DF,  p-value: < 2.2e-16
 ```
 
 * Therefore,we estimate an expected 3721.02 (SIN) dollar increase in price for every carat increase in mass of diamond. The intercept -259.63 is the expected price of a 0 carat diamond. The intercept is not of interest.
@@ -150,13 +188,25 @@ So let´s get a more interpretable intercept by mean centering
 fit2 <- lm(price ~ I(carat-mean(carat)), data = diamond)
 # if ypu want to do operations inside lm, you need I()
 coef(fit2)
+```
 
+```
+##            (Intercept) I(carat - mean(carat)) 
+##               500.0833              3721.0249
+```
+
+```r
 # thes same as...
 
 diamond$caratc <- diamond$carat - mean(diamond$carat)
 
 fitc <- lm(price ~ caratc, data = diamond)
 coef(fitc)
+```
+
+```
+## (Intercept)      caratc 
+##    500.0833   3721.0249
 ```
 
 * Thus the new intercept, 500.1, is the expected price for the average sized diamond of the data (0.2042
@@ -174,6 +224,11 @@ fit3 <- lm(price ~ I(carat * 10), data = diamond)
 coef(fit3)
 ```
 
+```
+##   (Intercept) I(carat * 10) 
+##     -259.6259      372.1025
+```
+
 
 Now we want to predict the price of data.
 
@@ -184,15 +239,43 @@ Let´s introduce the function *predict*
 ```r
 newx <- c(0.16, 0.27, 0.34)
 coef(fit)[1] + coef(fit)[2] * newx
+```
 
+```
+## [1]  335.7381  745.0508 1005.5225
+```
 
+```r
 # better/efficient method
 # use predict 
 
 predict(fit, newdata = data.frame(carat = newx))
+```
+
+```
+##         1         2         3 
+##  335.7381  745.0508 1005.5225
+```
+
+```r
 # here we plug the data in the form as a data frame
 
 predict(fit) # it predicts at the x data points --> gives you yhe fitted y´s
+```
+
+```
+##         1         2         3         4         5         6         7         8 
+##  372.9483  335.7381  372.9483  410.1586  670.6303  335.7381  298.5278  447.3688 
+##         9        10        11        12        13        14        15        16 
+##  521.7893  298.5278  410.1586  782.2611  335.7381  484.5791  596.2098  819.4713 
+##        17        18        19        20        21        22        23        24 
+##  186.8971  707.8406  670.6303  745.0508  410.1586  335.7381  372.9483  335.7381 
+##        25        26        27        28        29        30        31        32 
+##  372.9483  410.1586  372.9483  410.1586  372.9483  298.5278  372.9483  931.1020 
+##        33        34        35        36        37        38        39        40 
+##  931.1020  298.5278  335.7381  335.7381  596.2098  596.2098  372.9483  968.3123 
+##        41        42        43        44        45        46        47        48 
+##  670.6303 1042.7328  410.1586  670.6303  670.6303  298.5278  707.8406  298.5278
 ```
 
 

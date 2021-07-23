@@ -44,6 +44,8 @@ $$
 
 * If a regressor variable, $X_i$, is included in the model $\sum_{i=1}^n e_i X_i = 0$.
 
+**NOte: The above equations are the first order conditions of the problem of least squares (using derivatives).**
+
 * Residuals are useful for investigating poor model fit.
 
 * Positive residuals are above the line, negative residuals are below.
@@ -86,16 +88,37 @@ yhat <- predict(fit)
 ## with R's build in resid function
 
 max(abs(e -(y - yhat)))
+```
 
+```
+## [1] 9.485746e-13
+```
+
+```r
 ## Let's do it again hard coding the calculation of Yhat
 
 max(abs(e - (y - coef(fit)[1] - coef(fit)[2] * x)))
+```
 
+```
+## [1] 9.485746e-13
+```
 
+```r
 ## Let´s see thie empirical mean 
 sum(e) # really close to zero
+```
 
+```
+## [1] -1.865175e-14
+```
+
+```r
 sum(e*x)
+```
+
+```
+## [1] 6.959711e-15
 ```
 
 
@@ -151,6 +174,11 @@ g
 
 ```r
 coef(lm(y ~ x))
+```
+
+```
+## (Intercept)           x 
+## -0.03829792  1.35004132
 ```
 
 In this case the lineal model is not the correct for the data. The model is only accounting for the lineal trend in the data, not for the secondary variation in the sin term
@@ -291,9 +319,19 @@ This because we include two covariates (intercept and slope). When we include th
 y <- diamond$price; x <- diamond$carat; n <- length(y)
 fit <- lm(y ~ x)
 summary(fit)$sigma
+```
 
+```
+## [1] 31.84052
+```
+
+```r
 # or we can calculate it with the formula
 sqrt(sum(resid(fit)^2) / (n - 2))
+```
+
+```
+## [1] 31.84052
 ```
 
 ### **Summarizing variation**
@@ -306,15 +344,18 @@ $\sum_{i=1}^n (Y_i - \hat Y_i)^2$ (*the residual variability*)
 $$
 \sum_{i=1}^n (Y_i - \bar Y)^2 
 = \sum_{i=1}^n (Y_i - \hat Y_i)^2 + \sum_{i=1}^n  (\hat Y_i - \bar Y)^2 
-$$
-## **R squared**
+$$  
+ 
+## **R squared**  
 
 - R squared is the percentage of the total variability that is explained
 by the linear relationship with the predictor
 $$
 R^2 = \frac{\sum_{i=1}^n  (\hat Y_i - \bar Y)^2}{\sum_{i=1}^n (Y_i - \bar Y)^2}
-$$
-## Some facts about $R^2$
+$$    
+   
+## **Some facts about $R^2$**   
+
 * $R^2$ is the percentage of variation explained by the regression model.
 * $0 \leq R^2 \leq 1$
 * $R^2$ is the sample correlation squared.

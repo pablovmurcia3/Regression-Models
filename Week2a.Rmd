@@ -44,6 +44,8 @@ $$
 
 * If a regressor variable, $X_i$, is included in the model $\sum_{i=1}^n e_i X_i = 0$.
 
+**NOte: The above equations are the first order conditions of the problem of least squares (using derivatives).**
+
 * Residuals are useful for investigating poor model fit.
 
 * Positive residuals are above the line, negative residuals are below.
@@ -58,7 +60,7 @@ the predictor) from systematic variation (variation explained by the regression 
 
 ### **Code example**
 
-```{r y, results='hide', message = FALSE, warning= FALSE}
+```{r y, message = FALSE, warning= FALSE}
 library(UsingR)
 library(ggplot2)
 library(reshape2)
@@ -68,7 +70,7 @@ library(dplyr)
 
 
 
-```{r y1, results='hide', message = FALSE}
+```{r y1, message = FALSE}
 data(diamond)
 y <- diamond$price; x <- diamond$carat; n <- length(y)
 fit <- lm(y ~ x)
@@ -98,7 +100,7 @@ sum(e*x)
 
 
 
-```{r y2, results='hide', message = FALSE}
+```{r y2, message = FALSE}
 plot(diamond$carat, diamond$price,  
      xlab = "Mass (carats)", 
      ylab = "Price (SIN $)", 
@@ -111,7 +113,7 @@ for (i in 1 : n)
 
 But the graph is not useful for seeing the residual variation
 
-```{r y3, results='hide', message = FALSE}
+```{r y3, message = FALSE}
 plot(x, e,  
      xlab = "Mass (carats)", 
      ylab = "Residuals (SIN $)", 
@@ -128,7 +130,7 @@ What are we searching? That the graph has a random form.. without any trend.. (X
 
 **Pathological residual plots**
 
-```{r y4, results='hide', message = FALSE}
+```{r y4, message = FALSE}
 x = runif(100, -3, 3); y = x + sin(x) + rnorm(100, sd = .2); # this is the model --- not lineal!!
 
 library(ggplot2)
@@ -147,7 +149,7 @@ In this case the lineal model is not the correct for the data. The model is only
 But having the correct nmodel is not the ultimate goal... You can have good insights with a deficient model.
 
 
-```{r y5, results='hide', message = FALSE}
+```{r y5, message = FALSE}
 g = ggplot(data.frame(x = x, y = resid(lm(y ~ x))), 
            aes(x = x, y = y))
 g = g + geom_hline(yintercept = 0, size = 2); 
@@ -161,7 +163,7 @@ g
 Now the sin term is extremly apparent.. The residual plot highlight the model problems
 
 ### **Heteroskedasticity**
-```{r y6, results='hide', message = FALSE}
+```{r y6, message = FALSE}
 x <- runif(100, 0, 6); y <- x + rnorm(100,  mean = 0, sd = .001 * x); 
 g = ggplot(data.frame(x = x, y = y), aes(x = x, y = y))
 g = g + geom_smooth(method = "lm", colour = "black")
@@ -172,7 +174,7 @@ g
 
 Another common feature where our model fails is when the variance around the regression line is not constant. Remember our errors are assumed to be Gaussian with a constant error. Here’s an example where heteroskedasticity is not at all apparent in the scatterplot.
 
-```{r y7, results='hide', message = FALSE}
+```{r y7, message = FALSE}
 x <- runif(100, 0, 6); y <- x + rnorm(100,  mean = 0, sd = .001 * x); 
 g = ggplot(data.frame(x = x, y = y), aes(x = x, y = y))
 g = g + geom_smooth(method = "lm", colour = "black")
@@ -184,7 +186,7 @@ the *Heteroskedasticity* is really difficult to see in a scatterplor.
 
 
 
-```{r y8, results='hide', message = FALSE}
+```{r y8, message = FALSE}
 g = ggplot(data.frame(x = x, y = resid(lm(y ~ x))), 
            aes(x = x, y = y))
 g = g + geom_hline(yintercept = 0, size = 2); 
@@ -199,7 +201,7 @@ There is a clear trend in the variance. Greater variability when the x variable 
 
 ### **Diamond data residual plot**
 
-```{r y9, results='hide', message = FALSE}
+```{r y9, message = FALSE}
 diamond$e <- resid(lm(price ~ carat, data = diamond))
 g = ggplot(diamond, aes(x = carat, y = e))
 g = g + xlab("Mass (carats)")
@@ -214,7 +216,7 @@ g
 **It seems a pretty good fit...**
 
 
-```{r y10, results='hide', message = FALSE}
+```{r y10, message = FALSE}
 e = c(resid(lm(price ~ 1, data = diamond)), # variation around average price
       resid(lm(price ~ carat, data = diamond))) # variation around regression
 fit = factor(c(rep("Itc", nrow(diamond)),
@@ -252,7 +254,7 @@ This because we include two covariates (intercept and slope). When we include th
   
 * Also, the $n-2$ instead of $n$ is so that $E[\hat \sigma^2] = \sigma^2$ 
 
-```{r y111, results='hide', message = FALSE}
+```{r y111, message = FALSE}
 y <- diamond$price; x <- diamond$carat; n <- length(y)
 fit <- lm(y ~ x)
 summary(fit)$sigma
@@ -271,15 +273,18 @@ $\sum_{i=1}^n (Y_i - \hat Y_i)^2$ (*the residual variability*)
 $$
 \sum_{i=1}^n (Y_i - \bar Y)^2 
 = \sum_{i=1}^n (Y_i - \hat Y_i)^2 + \sum_{i=1}^n  (\hat Y_i - \bar Y)^2 
-$$
-## **R squared**
+$$  
+ 
+## **R squared**  
 
 - R squared is the percentage of the total variability that is explained
 by the linear relationship with the predictor
 $$
 R^2 = \frac{\sum_{i=1}^n  (\hat Y_i - \bar Y)^2}{\sum_{i=1}^n (Y_i - \bar Y)^2}
-$$
-## Some facts about $R^2$
+$$    
+   
+## **Some facts about $R^2$**   
+
 * $R^2$ is the percentage of variation explained by the regression model.
 * $0 \leq R^2 \leq 1$
 * $R^2$ is the sample correlation squared.
@@ -293,7 +298,7 @@ Do `example(anscombe)` to see the following data.
   * Identical correlations (hence same $R^2$ ).
   * Same linear regression relationship.
 
-```{r y12, results='hide', message = FALSE}
+```{r y12, message = FALSE}
 
 require(stats); require(graphics); data(anscombe)
 ff <- y ~ x
