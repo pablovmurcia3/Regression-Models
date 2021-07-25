@@ -110,7 +110,7 @@ sum(ey * ex) / sum(ex ^ 2)
 ```
 
 ```
-## [1] 1.009138
+## [1] 0.9999494
 ```
 
 ```r
@@ -118,8 +118,8 @@ coef(lm(ey ~ ex - 1))
 ```
 
 ```
-##       ex 
-## 1.009138
+##        ex 
+## 0.9999494
 ```
 
 ```r
@@ -128,7 +128,7 @@ coef(lm(y ~ x + x2 + x3))
 
 ```
 ## (Intercept)           x          x2          x3 
-##   1.0023864   1.0091385   1.0100655   0.9930739
+##   0.9980895   0.9999494   1.0079174   1.0102850
 ```
 
 So each coefficient of the LM is the regression through the origin with the linear relationships with the other regressors removed from both the regressor and outcome by taking residuals. (*The model can have an intercept, but it does not matter to the calculation*)
@@ -281,9 +281,9 @@ summary(lm(y ~ x1))$coef # REALLY WRONG
 ```
 
 ```
-##              Estimate Std. Error   t value     Pr(>|t|)
-## (Intercept)  1.201763   1.195388  1.005333 3.172125e-01
-## x1          95.861103   2.037679 47.044270 4.537450e-69
+##              Estimate Std. Error  t value     Pr(>|t|)
+## (Intercept)  1.836241   1.143875  1.60528 1.116499e-01
+## x1          93.972819   1.929848 48.69440 1.774716e-70
 ```
 
 ```r
@@ -292,10 +292,10 @@ summary(lm(y ~ x1 + x2))$coef
 ```
 
 ```
-##                 Estimate   Std. Error     t value      Pr(>|t|)
-## (Intercept) -0.002557693 0.0020124772   -1.270918  2.067973e-01
-## x1          -1.000753536 0.0167395661  -59.783720  2.393219e-78
-## x2           1.000030743 0.0001691942 5910.548564 2.617643e-271
+##                 Estimate   Std. Error    t value      Pr(>|t|)
+## (Intercept)  0.002500952 0.0022274641    1.12278  2.643023e-01
+## x1          -1.034121579 0.0188174861  -54.95535  6.694832e-75
+## x2           1.000293688 0.0001942345 5149.92922 1.663664e-265
 ```
 
 ```r
@@ -336,7 +336,7 @@ sum(dat$ey * dat$ex1) / sum(dat$ex1 ^ 2)
 ```
 
 ```
-## [1] -1.000754
+## [1] -1.034122
 ```
 
 ```r
@@ -344,10 +344,10 @@ summary(lm(y ~ x1 + x2))$coef
 ```
 
 ```
-##                 Estimate   Std. Error     t value      Pr(>|t|)
-## (Intercept) -0.002557693 0.0020124772   -1.270918  2.067973e-01
-## x1          -1.000753536 0.0167395661  -59.783720  2.393219e-78
-## x2           1.000030743 0.0001691942 5910.548564 2.617643e-271
+##                 Estimate   Std. Error    t value      Pr(>|t|)
+## (Intercept)  0.002500952 0.0022274641    1.12278  2.643023e-01
+## x1          -1.034121579 0.0188174861  -54.95535  6.694832e-75
+## x2           1.000293688 0.0001942345 5149.92922 1.663664e-265
 ```
 
 ## **Back to the swiss data set**
@@ -387,6 +387,222 @@ lm(Fertility ~ . + z, data = swiss)
 
 z adds no new linear information, since it's a linear combination of variables already included. R just drops  terms that are linear combinations of other terms.
 
+## **Dummy variables are smart**
 
+* Consider the linear model
+
+$$
+Y_i = \beta_0 + X_{i1} \beta_1 + \epsilon_{i}
+$$
+
+where each $X_{i1}$ is binary so that it is a 1 if measurement $i$ is in a group and 0 otherwise. (Treated versus not in a clinical trial, for example.)
+
+* Then for people in the group $E[Y_i] = \beta_0 + \beta_1$
+
+* And for people not in the group $E[Y_i] = \beta_0$
+
+* The LS fits work out to be $\hat \beta_0 + \hat \beta_1$ is the mean for those in the group and $\hat \beta_0$ is the mean for those not in the group.
+
+* $\beta_1$ is interpretted as the increase or decrease in the mean comparing those in the group to those not.
+
+* Note including a binary variable that is 1 for those not in the group would be redundant. It would create three parameters to describe two means.
+
+
+## **More than 2 levels**
+
+* Consider a multilevel factor level. For didactic reasons, let's say a three level factor (example, US political party affiliation: Republican, Democrat, Independent)
+
+* $Y_i = \beta_0 + X_{i1} \beta_1 + X_{i2} \beta_2 + \epsilon_i$.
+
+* $X_{i1}$ is 1 for Republicans and 0 otherwise.
+
+* $X_{i2}$ is 1 for Democrats and 0 otherwise.
+
+* If $i$ is Republican $E[Y_i] = \beta_0 +\beta_1$
+
+* If $i$ is Democrat $E[Y_i] = \beta_0 + \beta_2$.
+
+* If $i$ is Independent $E[Y_i] = \beta_0$. 
+
+*If we put the third varible (for independent), we will aggregate an unnecesary variable (it´s just a linear combination of the other two )*
+
+* $\beta_1$ compares Republicans to Independents. *The t test of the lineal model it´s the same that we will get by applying a test of difference of means*
+
+* $\beta_2$ compares Democrats to Independents.
+
+* $\beta_1 - \beta_2$ compares Republicans to Democrats. *The problem here is that we don´t get the standard error automatically*
+
+* (Choice of reference category changes the interpretation.)
+
+## **Example: Insect Sprays**
+
+```r
+data(InsectSprays)
+
+g = ggplot(data = InsectSprays, aes(y = count, x = spray, fill  = spray))
+g = g + geom_violin(colour = "black", size = 2)
+g = g + xlab("Type of spray") + ylab("Insect count")
+g
+```
+
+![](Week3_files/figure-html/y10-1.png)<!-- -->
+
+
+
+```r
+summary(lm(count ~ spray, data = InsectSprays))$coef
+```
+
+```
+##                Estimate Std. Error    t value     Pr(>|t|)
+## (Intercept)  14.5000000   1.132156 12.8074279 1.470512e-19
+## sprayB        0.8333333   1.601110  0.5204724 6.044761e-01
+## sprayC      -12.4166667   1.601110 -7.7550382 7.266893e-11
+## sprayD       -9.5833333   1.601110 -5.9854322 9.816910e-08
+## sprayE      -11.0000000   1.601110 -6.8702352 2.753922e-09
+## sprayF        2.1666667   1.601110  1.3532281 1.805998e-01
+```
+
+```r
+# The function take as reference the spray A
+# The intercept is it´s mean (spay A)
+```
+
+
+
+```r
+# We can do it manually in order to select the reference
+summary(lm(count ~ 
+             I(1 * (spray == 'B')) + I(1 * (spray == 'C')) + 
+             I(1 * (spray == 'D')) + I(1 * (spray == 'E')) +
+             I(1 * (spray == 'F'))
+           , data = InsectSprays))$coef
+```
+
+```
+##                          Estimate Std. Error    t value     Pr(>|t|)
+## (Intercept)            14.5000000   1.132156 12.8074279 1.470512e-19
+## I(1 * (spray == "B"))   0.8333333   1.601110  0.5204724 6.044761e-01
+## I(1 * (spray == "C")) -12.4166667   1.601110 -7.7550382 7.266893e-11
+## I(1 * (spray == "D"))  -9.5833333   1.601110 -5.9854322 9.816910e-08
+## I(1 * (spray == "E")) -11.0000000   1.601110 -6.8702352 2.753922e-09
+## I(1 * (spray == "F"))   2.1666667   1.601110  1.3532281 1.805998e-01
+```
+
+
+What if we include all 6?
+
+
+```r
+summary(lm(count ~ 
+   I(1 * (spray == 'B')) + I(1 * (spray == 'C')) +  
+   I(1 * (spray == 'D')) + I(1 * (spray == 'E')) +
+   I(1 * (spray == 'F')) + I(1 * (spray == 'A')), data = InsectSprays))$coef
+```
+
+```
+##                          Estimate Std. Error    t value     Pr(>|t|)
+## (Intercept)            14.5000000   1.132156 12.8074279 1.470512e-19
+## I(1 * (spray == "B"))   0.8333333   1.601110  0.5204724 6.044761e-01
+## I(1 * (spray == "C")) -12.4166667   1.601110 -7.7550382 7.266893e-11
+## I(1 * (spray == "D"))  -9.5833333   1.601110 -5.9854322 9.816910e-08
+## I(1 * (spray == "E")) -11.0000000   1.601110 -6.8702352 2.753922e-09
+## I(1 * (spray == "F"))   2.1666667   1.601110  1.3532281 1.805998e-01
+```
+
+What if we omit the intercept?
+
+```r
+summary(lm(count ~ spray - 1, data = InsectSprays))$coef
+```
+
+```
+##         Estimate Std. Error   t value     Pr(>|t|)
+## sprayA 14.500000   1.132156 12.807428 1.470512e-19
+## sprayB 15.333333   1.132156 13.543487 1.001994e-20
+## sprayC  2.083333   1.132156  1.840148 7.024334e-02
+## sprayD  4.916667   1.132156  4.342749 4.953047e-05
+## sprayE  3.500000   1.132156  3.091448 2.916794e-03
+## sprayF 16.666667   1.132156 14.721181 1.573471e-22
+```
+
+```r
+library(dplyr)
+summarise(group_by(InsectSprays, spray), mn = mean(count))
+```
+
+```
+## # A tibble: 6 x 2
+##   spray    mn
+## * <fct> <dbl>
+## 1 A     14.5 
+## 2 B     15.3 
+## 3 C      2.08
+## 4 D      4.92
+## 5 E      3.5 
+## 6 F     16.7
+```
+
+```r
+# Equal results
+
+# In this case, the p values are just testing if the means are different from 0
+
+# More useful if the p values show the significance of the difference of means
+```
+
+
+## Reordering the levels
+
+
+```r
+# difference reference level 
+spray2 <- relevel(InsectSprays$spray, "C")
+summary(lm(count ~ spray2, data = InsectSprays))$coef
+```
+
+```
+##              Estimate Std. Error  t value     Pr(>|t|)
+## (Intercept)  2.083333   1.132156 1.840148 7.024334e-02
+## spray2A     12.416667   1.601110 7.755038 7.266893e-11
+## spray2B     13.250000   1.601110 8.275511 8.509776e-12
+## spray2D      2.833333   1.601110 1.769606 8.141205e-02
+## spray2E      1.416667   1.601110 0.884803 3.794750e-01
+## spray2F     14.583333   1.601110 9.108266 2.794343e-13
+```
+## **Summary**
+
+* If we treat Spray as a factor, R includes an intercept and omits the alphabetically first level of the factor.
+
+  * All t-tests are for comparisons of Sprays versus Spray A.
+  
+  * Emprirical mean for A is the intercept.
+  
+  * Other group means are the itc plus their coefficient. 
+  
+* If we omit an intercept, then it includes terms for all levels of the factor. 
+
+  * Group means are the coefficients. 
+  
+  * Tests are tests of whether the groups are different than zero.
+  (Are the expected counts zero for that spray.)
+  
+* If we want comparisons between, Spray B and C, say we could refit the model with C (or B) as the reference level. 
+
+
+
+## **Other thoughts on this data**
+
+* Counts are bounded from below by 0, violates the assumption of normality of the errors. 
+
+  * Also there are counts near zero, so both the actual assumption and the intent of the assumption are violated.
+  
+* Variance does not appear to be constant.
+
+* Perhaps taking logs of the counts would help. 
+
+  * There are 0 counts, so maybe log(Count + 1)
+  
+* Also, we'll cover Poisson GLMs for fitting count data.
 
 

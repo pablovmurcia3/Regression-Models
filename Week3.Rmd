@@ -273,6 +273,144 @@ lm(Fertility ~ . + z, data = swiss)
 
 z adds no new linear information, since it's a linear combination of variables already included. R just drops  terms that are linear combinations of other terms.
 
+## **Dummy variables are smart**
 
+* Consider the linear model
+
+$$
+Y_i = \beta_0 + X_{i1} \beta_1 + \epsilon_{i}
+$$
+
+where each $X_{i1}$ is binary so that it is a 1 if measurement $i$ is in a group and 0 otherwise. (Treated versus not in a clinical trial, for example.)
+
+* Then for people in the group $E[Y_i] = \beta_0 + \beta_1$
+
+* And for people not in the group $E[Y_i] = \beta_0$
+
+* The LS fits work out to be $\hat \beta_0 + \hat \beta_1$ is the mean for those in the group and $\hat \beta_0$ is the mean for those not in the group.
+
+* $\beta_1$ is interpretted as the increase or decrease in the mean comparing those in the group to those not.
+
+* Note including a binary variable that is 1 for those not in the group would be redundant. It would create three parameters to describe two means.
+
+
+## **More than 2 levels**
+
+* Consider a multilevel factor level. For didactic reasons, let's say a three level factor (example, US political party affiliation: Republican, Democrat, Independent)
+
+* $Y_i = \beta_0 + X_{i1} \beta_1 + X_{i2} \beta_2 + \epsilon_i$.
+
+* $X_{i1}$ is 1 for Republicans and 0 otherwise.
+
+* $X_{i2}$ is 1 for Democrats and 0 otherwise.
+
+* If $i$ is Republican $E[Y_i] = \beta_0 +\beta_1$
+
+* If $i$ is Democrat $E[Y_i] = \beta_0 + \beta_2$.
+
+* If $i$ is Independent $E[Y_i] = \beta_0$. 
+
+*If we put the third varible (for independent), we will aggregate an unnecesary variable (it´s just a linear combination of the other two )*
+
+* $\beta_1$ compares Republicans to Independents. *The t test of the lineal model it´s the same that we will get by applying a test of difference of means*
+
+* $\beta_2$ compares Democrats to Independents.
+
+* $\beta_1 - \beta_2$ compares Republicans to Democrats. *The problem here is that we don´t get the standard error automatically*
+
+* (Choice of reference category changes the interpretation.)
+
+## **Example: Insect Sprays**
+```{r y10,message = FALSE}
+data(InsectSprays)
+
+g = ggplot(data = InsectSprays, aes(y = count, x = spray, fill  = spray))
+g = g + geom_violin(colour = "black", size = 2)
+g = g + xlab("Type of spray") + ylab("Insect count")
+g
+```
+
+
+```{r y10b,message = FALSE}
+summary(lm(count ~ spray, data = InsectSprays))$coef
+# The function take as reference the spray A
+# The intercept is it´s mean (spay A)
+```
+
+
+```{r y11,message = FALSE}
+# We can do it manually in order to select the reference
+summary(lm(count ~ 
+             I(1 * (spray == 'B')) + I(1 * (spray == 'C')) + 
+             I(1 * (spray == 'D')) + I(1 * (spray == 'E')) +
+             I(1 * (spray == 'F'))
+           , data = InsectSprays))$coef
+```
+
+
+What if we include all 6?
+
+```{r y12,message = FALSE}
+summary(lm(count ~ 
+   I(1 * (spray == 'B')) + I(1 * (spray == 'C')) +  
+   I(1 * (spray == 'D')) + I(1 * (spray == 'E')) +
+   I(1 * (spray == 'F')) + I(1 * (spray == 'A')), data = InsectSprays))$coef
+```
+
+What if we omit the intercept?
+```{r y13,message = FALSE}
+summary(lm(count ~ spray - 1, data = InsectSprays))$coef
+library(dplyr)
+summarise(group_by(InsectSprays, spray), mn = mean(count))
+# Equal results
+
+# In this case, the p values are just testing if the means are different from 0
+
+# More useful if the p values show the significance of the difference of means
+```
+
+
+## Reordering the levels
+
+```{r y14,message = FALSE}
+# difference reference level 
+spray2 <- relevel(InsectSprays$spray, "C")
+summary(lm(count ~ spray2, data = InsectSprays))$coef
+
+```
+## **Summary**
+
+* If we treat Spray as a factor, R includes an intercept and omits the alphabetically first level of the factor.
+
+  * All t-tests are for comparisons of Sprays versus Spray A.
+  
+  * Emprirical mean for A is the intercept.
+  
+  * Other group means are the itc plus their coefficient. 
+  
+* If we omit an intercept, then it includes terms for all levels of the factor. 
+
+  * Group means are the coefficients. 
+  
+  * Tests are tests of whether the groups are different than zero.
+  (Are the expected counts zero for that spray.)
+  
+* If we want comparisons between, Spray B and C, say we could refit the model with C (or B) as the reference level. 
+
+
+
+## **Other thoughts on this data**
+
+* Counts are bounded from below by 0, violates the assumption of normality of the errors. 
+
+  * Also there are counts near zero, so both the actual assumption and the intent of the assumption are violated.
+  
+* Variance does not appear to be constant.
+
+* Perhaps taking logs of the counts would help. 
+
+  * There are 0 counts, so maybe log(Count + 1)
+  
+* Also, we'll cover Poisson GLMs for fitting count data.
 
 
